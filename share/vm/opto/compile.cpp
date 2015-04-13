@@ -71,6 +71,7 @@
 #include "runtime/timer.hpp"
 #include "utilities/copy.hpp"
 
+#include "gc_interface/methodInfo.hpp"
 
 // -------------------- Compile::mach_constant_base_node -----------------------
 // Constant table base node singleton.
@@ -708,6 +709,20 @@ Compile::Compile( ciEnv* ci_env, C2Compiler* compiler, ciMethod* target, int osr
 
   Init(::AliasLevel);
 
+  // JR - Determine whether already we have information on this method or not.
+  //      If not then enable field collection.
+  if (CacheOptimalGC) {
+    // Lookup method to see if we should bother collecting field data
+    const MethodInfo* method_info = MethodInfoManager::getMethodInfo(_method->holder()->name(), _method->name(), _method->signature()->as_symbol());
+
+    if (method_info == NULL) {
+      // Method is unique so we should collect
+      _access_list = new MethodInfoAccessList();
+    }
+    else {
+      _access_list = NULL;
+    }
+  }
 
   print_compile_messages();
 
@@ -920,6 +935,15 @@ Compile::Compile( ciEnv* ci_env, C2Compiler* compiler, ciMethod* target, int osr
     if (log() != NULL) // Print code cache state into compiler log
       log()->code_cache_state();
   }
+
+if (CacheOptimalGC && should_collect_fields()) {
+  const MethodInfo* mi = MethodInfoManager::make(_method->holder()->name(), _method->name(), _method->signature()->as_symbol(), _access_list);
+  //const JRMethodInfo* mi = JRMethodInfoManager::make(NULL, _method->name(), NULL, _jr_access_list);
+  if (mi == NULL) {
+    delete _access_list;
+    _access_list = NULL;
+  }
+ }
 }
 
 //------------------------------Compile----------------------------------------
@@ -1011,7 +1035,6 @@ Compile::Compile( ciEnv* ci_env,
   NOT_PRODUCT( verify_graph_edges(); )
   Code_Gen();
   if (failing())  return;
-
 
   // Entry point will be accessed using compile->stub_entry_point();
   if (code_buffer() == NULL) {

@@ -529,6 +529,16 @@ class CommandLineFlags {
 
 #define RUNTIME_FLAGS(develop, develop_pd, product, product_pd, diagnostic, experimental, notproduct, manageable, product_rw, lp64_product) \
                                                                             \
+  product(bool, CacheOptimalGC, false,                                      \
+	  "Enable our cache optimal GC placement policy.")                  \
+                                                                            \
+  product(uintx, CacheOptimalGCSamplerInterval, 10,                         \
+          "the interval in milliseconds that we sample the stacks")         \
+                                                                            \
+  product(uintx, CacheOptimalGCCollectorInterval, 2000,                     \
+          "the interval in milliseconds that we attempt to reorder"         \
+          "the objects on the heap")                                        \
+                                                                            \
   lp64_product(bool, UseCompressedOops, false,                              \
           "Use 32-bit object references in 64-bit VM. "                     \
           "lp64_product means flag is always constant in 32 bit VM")        \

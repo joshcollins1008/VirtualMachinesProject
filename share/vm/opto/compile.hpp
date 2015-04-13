@@ -43,6 +43,8 @@
 #include "trace/tracing.hpp"
 #include "utilities/ticks.hpp"
 
+#include "gc_interface/methodInfo.hpp"
+
 class Block;
 class Bundle;
 class C2Compiler;
@@ -505,7 +507,12 @@ class Compile : public Phase {
   int                   _scratch_const_size;    // For temporary code buffers.
   bool                  _in_scratch_emit_size;  // true when in scratch_emit_size.
 
+  MethodInfoAccessList* _access_list;
+
  public:
+  bool should_collect_fields()             { return _access_list != NULL; }
+  MethodInfoAccessList* access_list()      { return _access_list; }
+
   // Accessors
 
   // The Compile instance currently active in this (compiler) thread.

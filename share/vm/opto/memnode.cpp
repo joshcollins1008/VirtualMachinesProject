@@ -42,6 +42,8 @@
 #include "opto/regmask.hpp"
 #include "utilities/copy.hpp"
 
+#include "gc_interface/methodInfo.hpp"
+
 // Portions of code courtesy of Clifford Click
 
 // Optimization - Graph Style
@@ -863,6 +865,24 @@ Node *MemNode::Ideal_common_DU_postCCP( PhaseCCP *ccp, Node* n, Node* adr ) {
 
 
 //=============================================================================
+// JR - Moved from headder 
+LoadNode::LoadNode(Node *c, Node *mem, Node *adr, const TypePtr* at, const Type *rt, MemOrd mo)
+    : MemNode(c,mem,adr,at), _type(rt), _mo(mo) {
+  init_class_id(Class_Load);
+
+  if (CacheOptimalGC) {
+    Compile* C = Compile::current();
+    
+    if (C->should_collect_fields()) {
+      const TypeOopPtr *adr_type1 = adr->bottom_type()->isa_oopptr();
+      if (adr_type1 != NULL) {
+	MethodInfoAccessList* mial = C->access_list();
+	mial->addAccess(adr_type1->klass()->name());
+      }
+    }
+  }
+}
+
 // Should LoadNode::Ideal() attempt to remove control edges?
 bool LoadNode::can_remove_control() const {
   return true;
@@ -2351,6 +2371,23 @@ Node* LoadRangeNode::Identity( PhaseTransform *phase ) {
 }
 
 //=============================================================================
+// JR - Moved from headder
+StoreNode::StoreNode(Node *c, Node *mem, Node *adr, const TypePtr* at, Node *val, MemOrd mo)
+  : MemNode(c, mem, adr, at, val), _mo(mo) {
+  init_class_id(Class_Store);
+  
+  if (CacheOptimalGC) {
+    Compile* C = Compile::current();
+    if (C->should_collect_fields()) {
+      const TypeOopPtr *adr_type1 = adr->bottom_type()->isa_oopptr();
+      if (adr_type1 != NULL) {
+	MethodInfoAccessList* mial = C->access_list();
+        mial->addAccess(adr_type1->klass()->name());
+      }
+    }
+  }
+}
+
 //---------------------------StoreNode::make-----------------------------------
 // Polymorphic factory method:
 StoreNode* StoreNode::make(PhaseGVN& gvn, Node* ctl, Node* mem, Node* adr, const TypePtr* adr_type, Node* val, BasicType bt, MemOrd mo) {

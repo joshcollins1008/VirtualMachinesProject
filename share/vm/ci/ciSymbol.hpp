@@ -31,6 +31,8 @@
 #include "classfile/vmSymbols.hpp"
 #include "oops/symbol.hpp"
 
+#include "gc_interface/methodInfo.hpp"
+
 // ciSymbol
 //
 // This class represents a Symbol* in the HotSpot virtual
@@ -46,6 +48,9 @@ class ciSymbol : public ciBaseObject {
   friend class ciMethod;
   friend class ciField;
   friend class ciObjArrayKlass;
+  
+  // JR - Friend MethodInfoManager class
+  friend class MethodInfoManager;
 
 private:
   const vmSymbols::SID _sid;

@@ -105,6 +105,8 @@
 #include "runtime/rtmLocking.hpp"
 #endif
 
+#include "runtime/threadSampler.hpp"
+
 PRAGMA_FORMAT_MUTE_WARNINGS_FOR_GCC
 
 #ifdef DTRACE_ENABLED
@@ -3548,6 +3550,11 @@ jint Threads::create_vm(JavaVMInitArgs* args, bool* canTryAgain) {
   if (MemProfiling)                   MemProfiler::engage();
   StatSampler::engage();
   if (CheckJNICalls)                  JniPeriodicChecker::engage();
+
+  if (CacheOptimalGC) {
+    HotMethodSamplerTaskManager::engage(CacheOptimalGCSamplerInterval);
+    HotFieldCollectorTaskManager::engage(CacheOptimalGCCollectorInterval);
+  }
 
   BiasedLocking::init();
 

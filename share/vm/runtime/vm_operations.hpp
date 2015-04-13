@@ -31,6 +31,8 @@
 #include "runtime/thread.hpp"
 #include "utilities/top.hpp"
 
+#include "runtime/task.hpp"
+
 // The following classes are used for operations
 // initiated by a Java thread but that must
 // take place in the VMThread.
@@ -105,6 +107,8 @@
   template(PrintCompileQueue)                     \
   template(PrintCodeList)                         \
   template(PrintCodeCache)                        \
+  template(HotMethodSampler)                      \
+  template(HotFieldCollector)                     \
   template(PrintClassHierarchy)                   \
 
 class VM_Operation: public CHeapObj<mtInternal> {
