@@ -3551,8 +3551,10 @@ jint Threads::create_vm(JavaVMInitArgs* args, bool* canTryAgain) {
   StatSampler::engage();
   if (CheckJNICalls)                  JniPeriodicChecker::engage();
 
+  // JR - Enable profiling used for the CacheOptimalGC
   if (CacheOptimalGC) {
     HotMethodSamplerTaskManager::engage(CacheOptimalGCSamplerInterval);
+    // JR - Mark for delete: Delete once we begin using the profiling information in the GC
     HotFieldCollectorTaskManager::engage(CacheOptimalGCCollectorInterval);
   }
 

@@ -437,6 +437,13 @@ void before_exit(JavaThread * thread) {
   StatSampler::disengage();
   StatSampler::destroy();
 
+  // JR - Shut down the CacheOptimalGC tasks
+  if (CacheOptimalGC) {
+    HotMethodSamplerTaskManager::disengage();
+    // JR - Mark for delete: Delete once we begin using the profiling information in the GC
+    HotFieldCollectorTaskManager::disengage();
+  }
+
   // Stop concurrent GC threads
   Universe::heap()->stop();
 
