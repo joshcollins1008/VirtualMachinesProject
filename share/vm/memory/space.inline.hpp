@@ -258,11 +258,10 @@ template <class SpaceType>
 inline void CompactibleSpace::scan_and_compact(SpaceType* space) {
   // Copy all live objects to their new location
   // Used by MarkSweep::mark_sweep_phase4()
-
   HeapWord*       q = space->bottom();
   HeapWord* const t = space->_end_of_live;
   debug_only(HeapWord* prev_q = NULL);
-
+  
   if (q < t && space->_first_dead > q && !oop(q)->is_gc_marked()) {
     #ifdef ASSERT // Debug only
       // we have a chunk of the space which hasn't moved and we've reinitialized
