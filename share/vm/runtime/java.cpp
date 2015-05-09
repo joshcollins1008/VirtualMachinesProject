@@ -80,6 +80,8 @@
 #include "opto/runtime.hpp"
 #endif
 
+#include "runtime/threadSampler.hpp"
+
 PRAGMA_FORMAT_MUTE_WARNINGS_FOR_GCC
 
 GrowableArray<Method*>* collected_profiled_methods;
