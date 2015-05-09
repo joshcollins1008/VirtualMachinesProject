@@ -393,6 +393,7 @@ bool PSScavenge::invoke_no_policy() {
 
     PSPromotionManager::pre_scavenge();
 
+    // JR - Mark motion begin
     // We'll use the promotion manager again later.
     PSPromotionManager* promotion_manager = PSPromotionManager::vm_thread_promotion_manager();
     {
@@ -472,6 +473,7 @@ bool PSScavenge::invoke_no_policy() {
       PSScavengeRootsClosure root_closure(promotion_manager);
       StringTable::unlink_or_oops_do(&_is_alive_closure, &root_closure);
     }
+    // JR - Mark move end
 
     // Finally, flush the promotion_manager's labs, and deallocate its stacks.
     promotion_failure_occurred = PSPromotionManager::post_scavenge(_gc_tracer);

@@ -80,7 +80,6 @@ void ThreadRootsMarkingTask::do_it(GCTaskManager* manager, uint which) {
 
 void MarkFromRootsTask::do_it(GCTaskManager* manager, uint which) {
   assert(Universe::heap()->is_gc_active(), "called outside gc");
-
   NOT_PRODUCT(GCTraceTime tm("MarkFromRootsTask",
     PrintGCDetails && TraceParallelOldGCTasks, true, NULL, PSParallelCompact::gc_tracer()->gc_id()));
   ParCompactionManager* cm =
@@ -322,7 +321,6 @@ void UpdateDensePrefixTask::do_it(GCTaskManager* manager, uint which) {
 
 void DrainStacksCompactionTask::do_it(GCTaskManager* manager, uint which) {
   assert(Universe::heap()->is_gc_active(), "called outside gc");
-
   NOT_PRODUCT(GCTraceTime tm("DrainStacksCompactionTask",
     PrintGCDetails && TraceParallelOldGCTasks, true, NULL, PSParallelCompact::gc_tracer()->gc_id()));
 

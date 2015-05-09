@@ -2488,7 +2488,7 @@ void PSParallelCompact::adjust_roots() {
 
 void PSParallelCompact::enqueue_region_draining_tasks(GCTaskQueue* q,
                                                       uint parallel_gc_threads)
-{
+{  
   GCTraceTime tm("drain task setup", print_phases(), true, &_gc_timer, _gc_tracer.gc_id());
 
   // Find the threads that are active
@@ -3323,6 +3323,7 @@ void MoveAndUpdateClosure::copy_partial_obj()
 
   HeapWord* const range_end = MIN2(source() + words, bitmap()->region_end());
   HeapWord* const end_addr = bitmap()->find_obj_end(source(), range_end);
+
   if (end_addr < range_end) {
     words = bitmap()->obj_size(source(), end_addr);
   }
