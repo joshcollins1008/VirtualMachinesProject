@@ -62,7 +62,8 @@ void ScavengeRootsTask::do_it(GCTaskManager* manager, uint which) {
       break;
 
     case jni_handles:
-      JNIHandles::oops_do(&roots_closure);
+      OopReorder::oops_do_interceptor0(&JNIHandles::oops_do, &roots_closure);
+      //JNIHandles::oops_do(&roots_closure);
       break;
 
     case threads:

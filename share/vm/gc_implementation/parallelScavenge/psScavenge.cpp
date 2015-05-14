@@ -56,6 +56,8 @@
 #include "services/memoryService.hpp"
 #include "utilities/stack.inline.hpp"
 
+#include "gc_implementation/parallelScavenge/oopReorder.hpp"
+
 PRAGMA_FORMAT_MUTE_WARNINGS_FOR_GCC
 
 HeapWord*                  PSScavenge::_to_space_top_before_gc = NULL;
@@ -325,6 +327,13 @@ bool PSScavenge::invoke_no_policy() {
     Universe::verify(" VerifyBeforeGC:");
   }
 
+  if (CacheOptimalGC && Verbose) {
+    tty->print_cr("PRE GC");
+    tty->print("  Objects on heap: ");
+    OopReorder::print_verification2();
+    heap->print_on(tty);
+  }
+  
   {
     ResourceMark rm;
     HandleMark hm;
@@ -474,6 +483,10 @@ bool PSScavenge::invoke_no_policy() {
       StringTable::unlink_or_oops_do(&_is_alive_closure, &root_closure);
     }
     // JR - Mark move end
+    if (CacheOptimalGC && Verbose) {
+      tty->print_cr("POST MOVEMENT");
+      heap->print_on(tty);
+    }
 
     // Finally, flush the promotion_manager's labs, and deallocate its stacks.
     promotion_failure_occurred = PSPromotionManager::post_scavenge(_gc_tracer);
@@ -681,6 +694,14 @@ bool PSScavenge::invoke_no_policy() {
   if (VerifyAfterGC && heap->total_collections() >= VerifyGCStartAt) {
     HandleMark hm;  // Discard invalid handles created during verification
     Universe::verify(" VerifyAfterGC:");
+  }
+
+  if (CacheOptimalGC && Verbose) {
+    tty->print_cr("POST GC");
+    tty->print("  Objects on heap: ");
+    OopReorder::print_verification2();
+    tty->print_cr("==========================================================");
+    tty->cr();
   }
 
   heap->print_heap_after_gc();

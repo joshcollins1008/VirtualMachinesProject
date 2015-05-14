@@ -11,9 +11,14 @@ private:
   static void sort_narrow(GrowableArray<narrowOop*>* collection);
 
 public:
+  static void oops_do_interceptor0(void (*oops_do)(OopClosure*), OopClosure* mark_and_push);
   static void oops_do_interceptor1(void (*oops_do)(OopClosure*, bool), OopClosure* mark_and_push);
   static void oops_do_interceptor2(void (*oops_do)(OopClosure*), OopClosure* mark_and_push, OopClosure* follow_class);
   static void oops_do_interceptor3(void (*oops_do)(OopClosure*), OopClosure* mark_and_push, OopClosure* makr_and_push_cld, OopClosure* each_active_code_blob);
+
+  static void print_verification0(void (*oops_do)(OopClosure*));
+  static void print_verification1(void (*oops_do)(OopClosure*, bool));
+  static void print_verification2();
 };
 
 #endif //SHARE_VM_GC_IMPLEMENTATION_PARALLELSCAVENGE_OOPREORDER_HPP
