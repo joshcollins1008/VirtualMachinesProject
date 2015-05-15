@@ -57,13 +57,13 @@ void ScavengeRootsTask::do_it(GCTaskManager* manager, uint which) {
 
   switch (_root_type) {
     case universe:
-      OopReorder::oops_do_interceptor1(&Universe::oops_do, &roots_closure);
-      //Universe::oops_do(&roots_closure);
+      //OopReorder::oops_do_interceptor1(&Universe::oops_do, &roots_closure);
+      Universe::oops_do(&roots_closure);
       break;
 
     case jni_handles:
-      OopReorder::oops_do_interceptor0(&JNIHandles::oops_do, &roots_closure);
-      //JNIHandles::oops_do(&roots_closure);
+      //OopReorder::oops_do_interceptor0(&JNIHandles::oops_do, &roots_closure);
+      JNIHandles::oops_do(&roots_closure);
       break;
 
     case threads:
